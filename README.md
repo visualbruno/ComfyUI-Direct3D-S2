@@ -1,6 +1,6 @@
 # ComfyUI-Direct3D-S2
 
-Requires Python v3.10 or Python v3.11
+Requires Python v3.10, v3.11 or v3.12
 
 I created these nodes to refine models generated with Hunyuan 3D v2.0 and v2.1
 
