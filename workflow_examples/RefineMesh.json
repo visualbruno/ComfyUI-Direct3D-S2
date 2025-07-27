@@ -1,0 +1,452 @@
+{
+  "id": "45478d21-d4a1-4f64-9d3b-9d91489b068b",
+  "revision": 0,
+  "last_node_id": 27,
+  "last_link_id": 27,
+  "nodes": [
+    {
+      "id": 16,
+      "type": "Hy3DPostprocessMesh",
+      "pos": [
+        96.24349212646484,
+        455.3966369628906
+      ],
+      "size": [
+        306.763671875,
+        154
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 12
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            13
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Hunyuan3DWrapper",
+        "ver": "630a30a56e2cebb1f94f65a5a1499c507fd84982",
+        "Node name for S&R": "Hy3DPostprocessMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        true,
+        true,
+        false,
+        40000,
+        false
+      ]
+    },
+    {
+      "id": 17,
+      "type": "Hy3D21MeshlibDecimate",
+      "pos": [
+        465.6967468261719,
+        527.9967651367188
+      ],
+      "size": [
+        327.1265563964844,
+        466
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 13
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            14
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Hunyuan3d-2-1",
+        "ver": "eddd0e198d964c6fbc0d296cda89ca3b162fb774",
+        "Node name for S&R": "Hy3D21MeshlibDecimate",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        16,
+        500000,
+        0,
+        "None",
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        false,
+        0
+      ]
+    },
+    {
+      "id": 10,
+      "type": "Hy3DDirect3DS2ModelLoader",
+      "pos": [
+        -1050.0299072265625,
+        423.9367370605469
+      ],
+      "size": [
+        333.7585144042969,
+        87.64665985107422
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "links": [
+            7
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Hunyuan3DWrapper",
+        "ver": "630a30a56e2cebb1f94f65a5a1499c507fd84982",
+        "Node name for S&R": "Hy3DDirect3DS2ModelLoader",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "wushuang98/Direct3D-S2",
+        "direct3d-s2-v-1-1"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "Hy3D21LoadImageWithTransparency",
+      "pos": [
+        -1118.596923828125,
+        583.65673828125
+      ],
+      "size": [
+        477.3283996582031,
+        619.5599975585938
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": null
+        },
+        {
+          "name": "image_with_alpha",
+          "type": "IMAGE",
+          "links": [
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Hunyuan3d-2-1",
+        "ver": "eddd0e198d964c6fbc0d296cda89ca3b162fb774",
+        "Node name for S&R": "Hy3D21LoadImageWithTransparency",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "Image_04207_.png",
+        "image"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "Hy3DRefineMeshWithDirect3DS2",
+      "pos": [
+        -271.59661865234375,
+        452.97662353515625
+      ],
+      "size": [
+        324.7476501464844,
+        242
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "link": 7
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 11
+        },
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 8
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            12
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Hunyuan3DWrapper",
+        "ver": "630a30a56e2cebb1f94f65a5a1499c507fd84982",
+        "Node name for S&R": "Hy3DRefineMeshWithDirect3DS2",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        1024,
+        15,
+        7,
+        false,
+        0.2,
+        12345,
+        "fixed"
+      ]
+    },
+    {
+      "id": 19,
+      "type": "Preview3D",
+      "pos": [
+        -591.2784423828125,
+        753.7020874023438
+      ],
+      "size": [
+        627.47998046875,
+        626.6333618164062
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "camera_info",
+          "shape": 7,
+          "type": "LOAD3D_CAMERA",
+          "link": null
+        },
+        {
+          "name": "model_file",
+          "type": "STRING",
+          "widget": {
+            "name": "model_file"
+          },
+          "link": 15
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.3.45",
+        "Node name for S&R": "Preview3D",
+        "widget_ue_connectable": {},
+        "Last Time Model File": "DwarfWarrior_D3D_1024_v1_NoInt_00003_.obj",
+        "Material Mode": "normal",
+        "Camera Info": {
+          "position": {
+            "x": -0.11186538089156774,
+            "y": 3.3630119919399912,
+            "z": 8.986337080016527
+          },
+          "target": {
+            "x": 0,
+            "y": 2.5,
+            "z": 0
+          },
+          "zoom": 1,
+          "cameraType": "perspective"
+        }
+      },
+      "widgets_values": [
+        "DwarfWarrior_D3D_1024_v1_NoInt_00003_.obj",
+        ""
+      ]
+    },
+    {
+      "id": 18,
+      "type": "Hy3D21ExportMesh",
+      "pos": [
+        134.96337890625,
+        759.510009765625
+      ],
+      "size": [
+        283.5542907714844,
+        106
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 14
+        }
+      ],
+      "outputs": [
+        {
+          "name": "glb_path",
+          "type": "STRING",
+          "links": [
+            15
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Hunyuan3d-2-1",
+        "ver": "eddd0e198d964c6fbc0d296cda89ca3b162fb774",
+        "Node name for S&R": "Hy3D21ExportMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "RefinedMesh",
+        "obj",
+        true
+      ]
+    },
+    {
+      "id": 12,
+      "type": "Hy3DLoadMesh",
+      "pos": [
+        -589.0195922851562,
+        539.8549194335938
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            8
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Hunyuan3DWrapper",
+        "ver": "630a30a56e2cebb1f94f65a5a1499c507fd84982",
+        "Node name for S&R": "Hy3DLoadMesh",
+        "widget_ue_connectable": {}
+      },
+      "widgets_values": [
+        "C:\\Git\\ComfyUI\\output\\DwarfWarrior_Hy20_Latents_Hy3D_00001_.obj"
+      ]
+    }
+  ],
+  "links": [
+    [
+      7,
+      10,
+      0,
+      11,
+      0,
+      "HY3DS2PIPELINE"
+    ],
+    [
+      8,
+      12,
+      0,
+      11,
+      2,
+      "TRIMESH"
+    ],
+    [
+      11,
+      15,
+      2,
+      11,
+      1,
+      "IMAGE"
+    ],
+    [
+      12,
+      11,
+      0,
+      16,
+      0,
+      "TRIMESH"
+    ],
+    [
+      13,
+      16,
+      0,
+      17,
+      0,
+      "TRIMESH"
+    ],
+    [
+      14,
+      17,
+      0,
+      18,
+      0,
+      "TRIMESH"
+    ],
+    [
+      15,
+      18,
+      0,
+      19,
+      1,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ue_links": [],
+    "ds": {
+      "scale": 0.7513148009015777,
+      "offset": [
+        1224.3663828822193,
+        -288.55339544281054
+      ]
+    },
+    "links_added_by_ue": [],
+    "frontendVersion": "1.23.4"
+  },
+  "version": 0.4
+}
