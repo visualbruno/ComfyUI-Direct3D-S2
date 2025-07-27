@@ -34,11 +34,11 @@ Windows: You can find precompiled wheels here [https://huggingface.co/lldacing/f
 
 You will find the models here: [https://huggingface.co/wushuang98/Direct3D-S2/tree/main](https://huggingface.co/wushuang98/Direct3D-S2/tree/main)
 
-Create a folder `wushuang98` in the folder `models` and copy the models `direct3d-s2-v-1-0` and `direct3d-s2-v-1-1` in `wushuang98` folder
+Create a folder `wushuang98/Direct3D-S2` in the folder `models` and copy the models `direct3d-s2-v-1-0` and `direct3d-s2-v-1-1` in `wushuang98` folder
 
 You should have a structure like this:
 
-`ComfyUI / models / wushuang98 / direct3d-s2-v-1-0 / files from huggingface`
+`ComfyUI / models / wushuang98 / Direct3D-S2 / direct3d-s2-v-1-0 / files from huggingface`
 
-`ComfyUI / models / wushuang98 / direct3d-s2-v-1-1 / files from huggingface`
+`ComfyUI / models / wushuang98 / Direct3D-S2 / direct3d-s2-v-1-1 / files from huggingface`
 
