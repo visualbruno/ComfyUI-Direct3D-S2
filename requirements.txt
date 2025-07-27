@@ -1,0 +1,13 @@
+scikit-image
+trimesh
+omegaconf
+tqdm
+huggingface_hub
+einops
+numpy
+transformers>=4.40.2
+diffusers
+pymeshfix
+git+https://github.com/EasternJournalist/utils3d.git#egg=utils3d
+pyvista
+igraph
