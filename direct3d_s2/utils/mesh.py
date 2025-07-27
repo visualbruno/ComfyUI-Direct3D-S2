@@ -4,8 +4,8 @@ import udf_ext
 
 
 def compute_valid_udf(vertices, faces, dim=512, threshold=8.0):
-    if not faces.is_cuda or not vertices.is_cuda:
-        raise ValueError("Both maze and visited tensors must be CUDA tensors")
+    if faces.device.type != vertices.device.type:
+        raise ValueError("Vertices and faces must be on the same device")
     udf = torch.zeros(dim**3,device=vertices.device).int() + 10000000
     n_faces = faces.shape[0]
     udf_ext.compute_valid_udf(vertices, faces, udf, n_faces, dim, threshold)
