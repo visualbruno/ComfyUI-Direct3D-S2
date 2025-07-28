@@ -21,6 +21,7 @@ from .utils import (
 
 from .models.autoencoders.ss_vae import SparseSDFVAE
 from .models.transformers.sparse_dit import SparseDiT
+from .models.refiner.unet_refiner import Voxel_RefinerXL, Voxel_RefinerXL_sign
 
 comfy_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 direct3ds2_path = os.path.join(comfy_path, "models", "wushuang98", "Direct3D-S2")
@@ -292,6 +293,13 @@ class Direct3DS2Pipeline(object):
         
     def init_refiner_1024(self):
         state_dict_refiner_1024 = torch.load(self.model_refiner_1024_path, map_location='cpu', weights_only=True)
+        # self.refiner_1024 = Voxel_RefinerXL_sign( in_channels = 1,
+                                                # out_channels = 1,
+                                                # layers_per_block = 2,
+                                                # layers_mid_block = 2,
+                                                # patch_size = 256,
+                                                # use_fp16 = True
+                                                # )
         self.refiner_1024 = instantiate_from_config(self.cfg.refiner_1024)
         self.refiner_1024.load_state_dict(state_dict_refiner_1024["refiner"], strict=True)
         self.refiner_1024.eval()
@@ -396,7 +404,7 @@ class Direct3DS2Pipeline(object):
         self.sparse_scheduler_1024 = instantiate_from_config(self.cfg.sparse_scheduler_1024)
         
         self.sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
-        #self.sparse_image_encoder.to(self.device)
+        self.sparse_image_encoder.to(self.device)
         
     @torch.no_grad()
     def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed):
