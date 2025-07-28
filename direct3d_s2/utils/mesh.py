@@ -4,12 +4,22 @@ import udf_ext
 
 
 def compute_valid_udf(vertices, faces, dim=512, threshold=8.0):
-    if faces.device.type != vertices.device.type:
-        raise ValueError("Vertices and faces must be on the same device")
-    udf = torch.zeros(dim**3,device=vertices.device).int() + 10000000
-    n_faces = faces.shape[0]
-    udf_ext.compute_valid_udf(vertices, faces, udf, n_faces, dim, threshold)
-    return udf.float()/10000000.
+    if not faces.is_cuda or not vertices.is_cuda:
+        raise ValueError("Both maze and visited tensors must be CUDA tensors")
+    
+    with torch.no_grad():
+        udf = torch.empty(dim ** 3, device=vertices.device, dtype=torch.int32)
+        udf.fill_(10000000)
+
+        n_faces = faces.shape[0]
+        torch.cuda.synchronize()
+
+        udf_ext.compute_valid_udf(vertices, faces, udf, n_faces, dim, threshold)
+        torch.cuda.synchronize()
+
+        udf_float_cpu = udf.cpu().to(dtype=torch.float32) / 10000000.
+        udf = udf_float_cpu.to(vertices.device)
+        return udf
 
 def normalize_mesh(mesh, scale=0.95):
     vertices = mesh.vertices

@@ -28,48 +28,16 @@ config_path = os.path.join(comfy_path, "custom_nodes", "ComfyUI-Direct3D-S2", "c
 
 class Direct3DS2Pipeline(object):
 
-    def __init__(self):
+    def __init__(self, device):
         self.dtype=torch.float16
-    
-    def to(self, device):
-        self.device = torch.device(device)
-        
-        if self.dense_vae != None:
-            self.dense_vae.to(device)
-            
-        if self.dense_dit != None:
-            self.dense_dit.to(device)
-            
-        if self.sparse_vae_512 != None:
-            self.sparse_vae_512.to(device)
-            
-        if self.sparse_dit_512 != None:
-            self.sparse_dit_512.to(device)
-            
-        if self.sparse_vae_1024 != None:
-            self.sparse_vae_1024.to(device)
-            
-        if self.sparse_dit_1024 != None:
-            self.sparse_dit_1024.to(device)
-            
-        if self.refiner != None:
-            self.refiner.to(device)
-            
-        if self.refiner_1024 != None:            
-            self.refiner_1024.to(device)
-            
-        if self.dense_image_encoder != None:
-            self.dense_image_encoder.to(device)
-            
-        if self.sparse_image_encoder != None:
-            self.sparse_image_encoder.to(device)
+        self.device = torch.device(device)   
 
     def init_config(self, pipeline_path, subfolder):        
         dtype=torch.float16
         model_dir = os.path.join(direct3ds2_path, subfolder) 
+        self.config_path = config_path
         if os.path.isdir(model_dir):
-            print(f'Model dir found. Using {subfolder}')
-            self.config_path = config_path
+            print(f'Model dir found. Using {subfolder}')                 
             self.model_dense_path = os.path.join(model_dir, 'model_dense.ckpt')
             self.model_sparse_512_path = os.path.join(model_dir, 'model_sparse_512.ckpt')
             self.model_sparse_1024_path = os.path.join(model_dir, 'model_sparse_1024.ckpt')
@@ -77,8 +45,7 @@ class Direct3DS2Pipeline(object):
             self.model_refiner_1024_path = os.path.join(model_dir, 'model_refiner_1024.ckpt')
         else:
             print('Model dir not found. Downloading from huggingface ...')
-            self.config_path = config_path
-            
+                        
             self.model_dense_path = hf_hub_download(
                 repo_id=pipeline_path, 
                 subfolder=subfolder,
@@ -110,144 +77,21 @@ class Direct3DS2Pipeline(object):
                 repo_type="model"
             )
 
-        self.cfg = OmegaConf.load(self.config_path)
-        
-        dense_vae = None
-        dense_dit = None
-        sparse_vae_512 = None
-        sparse_dit_512 = None
-        sparse_vae_1024 = None
-        sparse_dit_1024 = None
-        dense_image_encoder = None
-        dense_scheduler = None
-        sparse_image_encoder = None
-        sparse_scheduler_512 = None
-        sparse_scheduler_1024 = None
-        refiner = None
-        refiner_1024 = None
+        self.cfg = OmegaConf.load(self.config_path)        
 
-        # state_dict_dense = torch.load(model_dense_path, map_location='cpu', weights_only=True)
-        # dense_vae = instantiate_from_config(cfg.dense_vae)
-        # dense_vae.load_state_dict(state_dict_dense["vae"], strict=True)
-        # dense_vae.eval()
-        # dense_dit = instantiate_from_config(cfg.dense_dit)
-        # dense_dit.load_state_dict(state_dict_dense["dit"], strict=True)
-        # dense_dit.eval()
-
-        # state_dict_sparse_512 = torch.load(model_sparse_512_path, map_location='cpu', weights_only=True)
-        # sparse_vae_512 = SparseSDFVAE(  use_checkpoint=True,
-                                        # embed_dim=16,
-                                        # num_head_channels_encoder=64,
-                                        # model_channels_encoder=512,
-                                        # num_heads_encoder=8, 
-                                        # num_blocks_encoder=4,
-                                        # num_head_channels_decoder=64,
-                                        # model_channels_decoder=512, 
-                                        # num_heads_decoder=8, 
-                                        # num_blocks_decoder=4,
-                                        # resolution=64,
-                                        # out_channels=1,
-                                        # use_fp16=True,
-                                        # latents_scale=1.0,
-                                        # latents_shift=0.0)
-                                        
-        # sparse_vae_512.load_state_dict(state_dict_sparse_512["vae"], strict=True)
-        # sparse_vae_512.eval()
-        # sparse_dit_512 = SparseDiT(resolution=64, 
-                                   # in_channels=16,
-                                   # out_channels=16,
-                                   # model_channels=1024,
-                                   # cond_channels=1024,
-                                   # num_blocks=24,
-                                   # num_heads=32,
-                                   # num_kv_heads=2,
-                                   # compression_block_size=8,
-                                   # selection_block_size=8,
-                                   # topk=8,
-                                   # compression_version="v1",
-                                   # pe_mode="ape",
-                                   # factor=1.0,
-                                   # sparse_conditions=False,
-                                   # qk_rms_norm=True,
-                                   # use_shift=True,
-                                   # use_checkpoint=True,
-                                   # use_fp16=True)
-                                    
-        # sparse_dit_512.load_state_dict(state_dict_sparse_512["dit"], strict=True)
-        # sparse_dit_512.eval()
-
-        # state_dict_sparse_1024 = torch.load(model_sparse_1024_path, map_location='cpu', weights_only=True)
-        # sparse_vae_1024 = SparseSDFVAE(  use_checkpoint=True,
-                                        # embed_dim=16,
-                                        # num_head_channels_encoder=64,
-                                        # model_channels_encoder=512,
-                                        # num_heads_encoder=8, 
-                                        # num_blocks_encoder=4,
-                                        # num_head_channels_decoder=64,
-                                        # model_channels_decoder=512, 
-                                        # num_heads_decoder=8, 
-                                        # num_blocks_decoder=4,
-                                        # resolution=128,
-                                        # out_channels=1,
-                                        # use_fp16=True,
-                                        # latents_scale=1.0,
-                                        # latents_shift=0.0,
-                                        # chunk_size=4)
-                                        
-        # sparse_vae_1024.load_state_dict(state_dict_sparse_1024["vae"], strict=True)
-        # sparse_vae_1024.eval()
-        # sparse_dit_1024 = SparseDiT(resolution=128, 
-                                   # in_channels=16,
-                                   # out_channels=16,
-                                   # model_channels=1024,
-                                   # cond_channels=1024,
-                                   # num_blocks=24,
-                                   # num_heads=32,
-                                   # num_kv_heads=2,
-                                   # compression_block_size=8,
-                                   # selection_block_size=8,
-                                   # topk=8,
-                                   # compression_version="v1",
-                                   # pe_mode="ape",
-                                   # factor=0.5,
-                                   # sparse_conditions=False,
-                                   # qk_rms_norm=True,
-                                   # use_shift=True,
-                                   # use_checkpoint=True,
-                                   # use_fp16=True)
-        # sparse_dit_1024.load_state_dict(state_dict_sparse_1024["dit"], strict=True)
-        # sparse_dit_1024.eval()
-
-        # state_dict_refiner = torch.load(model_refiner_path, map_location='cpu', weights_only=True)
-        # refiner = instantiate_from_config(cfg.refiner)
-        # refiner.load_state_dict(state_dict_refiner["refiner"], strict=True)
-        # refiner.eval()
-
-        # state_dict_refiner_1024 = torch.load(model_refiner_1024_path, map_location='cpu', weights_only=True)
-        # refiner_1024 = instantiate_from_config(cfg.refiner_1024)
-        # refiner_1024.load_state_dict(state_dict_refiner_1024["refiner"], strict=True)
-        # refiner_1024.eval()
-
-        # dense_image_encoder = instantiate_from_config(cfg.dense_image_encoder)
-        # sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
-
-        # dense_scheduler = instantiate_from_config(cfg.dense_scheduler)
-        # sparse_scheduler_512 = instantiate_from_config(cfg.sparse_scheduler_512)
-        # sparse_scheduler_1024 = instantiate_from_config(cfg.sparse_scheduler_1024)
-
-        self.dense_vae = dense_vae
-        self.dense_dit = dense_dit
-        self.sparse_vae_512 = sparse_vae_512
-        self.sparse_dit_512 = sparse_dit_512
-        self.sparse_vae_1024 = sparse_vae_1024
-        self.sparse_dit_1024 = sparse_dit_1024
-        self.refiner = refiner
-        self.refiner_1024 = refiner_1024
-        self.dense_image_encoder = dense_image_encoder
-        self.sparse_image_encoder = sparse_image_encoder
-        self.dense_scheduler = dense_scheduler
-        self.sparse_scheduler_512 = sparse_scheduler_512
-        self.sparse_scheduler_1024 = sparse_scheduler_1024
+        self.dense_vae = None
+        self.dense_dit = None
+        self.sparse_vae_512 = None
+        self.sparse_dit_512 = None
+        self.sparse_vae_1024 = None
+        self.sparse_dit_1024 = None
+        self.refiner = None
+        self.refiner_1024 = None
+        self.dense_image_encoder = None
+        self.sparse_image_encoder = None
+        self.dense_scheduler = None
+        self.sparse_scheduler_512 = None
+        self.sparse_scheduler_1024 = None
         self.dtype = dtype
         
     def clear_memory(self):
@@ -290,6 +134,9 @@ class Direct3DS2Pipeline(object):
         if self.sparse_image_encoder != None:
             del self.sparse_image_encoder
             self.sparse_image_encoder = None
+            
+        torch.cuda.empty_cache()
+        gc.collect()
 
     def preprocess(self, image):
         if image.mode == 'RGBA':
@@ -424,9 +271,7 @@ class Direct3DS2Pipeline(object):
         
         if remove_interior:            
             del latents, noise_pred, noise_pred_cond, noise_pred_uncond, x_input, cond, uncond
-            self.clear_memory()            
-            torch.cuda.empty_cache()
-            gc.collect()
+            self.clear_memory()
             
             if mode == 'sparse512':
                 self.init_refiner()
@@ -443,7 +288,7 @@ class Direct3DS2Pipeline(object):
         self.refiner.load_state_dict(state_dict_refiner["refiner"], strict=True)
         self.refiner.eval()
         
-        self.to(self.device)
+        self.refiner.to(self.device)
         
     def init_refiner_1024(self):
         state_dict_refiner_1024 = torch.load(self.model_refiner_1024_path, map_location='cpu', weights_only=True)
@@ -451,7 +296,7 @@ class Direct3DS2Pipeline(object):
         self.refiner_1024.load_state_dict(state_dict_refiner_1024["refiner"], strict=True)
         self.refiner_1024.eval()
         
-        self.to(self.device)
+        self.refiner_1024.to(self.device)
 
     def init_sparse_512(self):
         state_dict_sparse_512 = torch.load(self.model_sparse_512_path, map_location='cpu', weights_only=True)
@@ -473,6 +318,7 @@ class Direct3DS2Pipeline(object):
                                         
         self.sparse_vae_512.load_state_dict(state_dict_sparse_512["vae"], strict=True)
         self.sparse_vae_512.eval()
+        self.sparse_vae_512.to(self.device)
         self.sparse_dit_512 = SparseDiT(resolution=64, 
                                    in_channels=16,
                                    out_channels=16,
@@ -495,12 +341,12 @@ class Direct3DS2Pipeline(object):
                                     
         self.sparse_dit_512.load_state_dict(state_dict_sparse_512["dit"], strict=True)
         self.sparse_dit_512.eval()
+        self.sparse_dit_512.to(self.device)
         
         self.sparse_scheduler_512 = instantiate_from_config(self.cfg.sparse_scheduler_512)
         
         self.sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
-        
-        self.to(self.device)
+        self.sparse_image_encoder.to(self.device)
         
     def init_sparse_1024(self):
         state_dict_sparse_1024 = torch.load(self.model_sparse_1024_path, map_location='cpu', weights_only=True)
@@ -523,6 +369,7 @@ class Direct3DS2Pipeline(object):
                                         
         self.sparse_vae_1024.load_state_dict(state_dict_sparse_1024["vae"], strict=True)
         self.sparse_vae_1024.eval()
+        self.sparse_vae_1024.to(self.device)
         self.sparse_dit_1024 = SparseDiT(resolution=128, 
                                    in_channels=16,
                                    out_channels=16,
@@ -543,13 +390,13 @@ class Direct3DS2Pipeline(object):
                                    use_checkpoint=True,
                                    use_fp16=True)
         self.sparse_dit_1024.load_state_dict(state_dict_sparse_1024["dit"], strict=True)
-        self.sparse_dit_1024.eval() 
+        self.sparse_dit_1024.eval()
+        self.sparse_dit_1024.to(self.device)
 
         self.sparse_scheduler_1024 = instantiate_from_config(self.cfg.sparse_scheduler_1024)
         
         self.sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
-
-        self.to(self.device)
+        #self.sparse_image_encoder.to(self.device)
         
     @torch.no_grad()
     def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed):
@@ -557,12 +404,12 @@ class Direct3DS2Pipeline(object):
         self.init_sparse_1024()
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
-        
-        image = self.prepare_image(image)
+                
         mesh = normalize_mesh(mesh)
         latent_index = mesh2index(mesh, size=1024, factor=8)
         latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
 
+        image = self.prepare_image(image)
         mesh = self.inference(image, self.sparse_vae_1024, self.sparse_dit_1024, 
                             self.sparse_image_encoder, self.sparse_scheduler_1024, 
                             generator=generator, mode='sparse1024', 
@@ -576,35 +423,19 @@ class Direct3DS2Pipeline(object):
         self.init_sparse_512()    
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
-        
-        image = self.prepare_image(image)
+                
         mesh = normalize_mesh(mesh)
         latent_index = mesh2index(mesh, size=512, factor=8)
         latent_index = sort_block(latent_index, self.sparse_dit_512.selection_block_size) 
+
+        image = self.prepare_image(image)
 
         mesh = self.inference(image, self.sparse_vae_512, self.sparse_dit_512, 
                             self.sparse_image_encoder, self.sparse_scheduler_512, 
                             generator=generator, mode='sparse512', 
                             mc_threshold=mc_threshold, latent_index=latent_index, 
                             remove_interior=remove_interior, num_inference_steps=steps, guidance_scale=guidance_scale)[0]         
-        return mesh        
-    
-    @torch.no_grad()
-    def remove_interior_512(self, mesh, mc_threshold):
-        self.clear_memory()
-        self.init_sparse_1024()
-        
-        
-        self.init_refiner()
-        mesh = self.refiner.run(mesh, mc_threshold=mc_threshold)     
-        return mesh
-
-    @torch.no_grad()
-    def remove_interior_1024(self, mesh, mc_threshold):
-        self.clear_memory()
-        self.init_refiner_1024()
-        mesh = self.refiner_1024.run(reconst_x=mesh, mc_threshold=mc_threshold)                         
-        return mesh
+        return mesh   
     
     @torch.no_grad()
     def __call__(

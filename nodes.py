@@ -170,9 +170,8 @@ class Hy3DDirect3DS2ModelLoader:
         device = mm.get_torch_device()
         offload_device = mm.unet_offload_device()
         
-        pipe = Direct3DS2Pipeline()
+        pipe = Direct3DS2Pipeline(device)
         pipe.init_config(pipeline_path, subfolder=subfolder)
-        pipe.to(device)
         
         return (pipe,) 
 
