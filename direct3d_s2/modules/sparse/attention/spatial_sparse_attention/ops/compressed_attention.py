@@ -20,7 +20,7 @@ import torch
 from copy import deepcopy
 import triton
 import triton.language as tl
-from ......modules import sparse as sp
+import direct3d_s2.modules.sparse as sp
 
 
 @triton.jit

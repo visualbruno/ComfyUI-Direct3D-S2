@@ -1,8 +1,8 @@
 from typing import *
 import torch
 import flash_attn   
-from ......modules.sparse import SparseTensor
-from ......modules.sparse.attention.windowed_attn import calc_window_partition
+from direct3d_s2.modules.sparse import SparseTensor
+from direct3d_s2.modules.sparse.attention.windowed_attn import calc_window_partition
 
 
 def sparse_window_attention(

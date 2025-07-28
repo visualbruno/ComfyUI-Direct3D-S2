@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import itertools
 import torch
-import gc
 import torch.nn as nn
 import numpy as np
 import torch.nn.functional as F
@@ -9,8 +8,8 @@ from .unet3d import UNet3DModel
 import trimesh
 from tqdm import tqdm
 from skimage import measure
-from ...modules.utils import convert_module_to_f16, convert_module_to_f32
-from ...modules import sparse as sp
+from direct3d_s2.modules.utils import convert_module_to_f16, convert_module_to_f32
+import direct3d_s2.modules.sparse as sp
 
 
 def adaptive_conv(inputs,weights):
@@ -74,7 +73,7 @@ class Voxel_RefinerXL(nn.Module):
                 patch_size: int = 192,
                 res: int = 512,
                 use_checkpoint: bool=False,
-                use_fp16: bool = True):
+                use_fp16: bool = False):
 
         super().__init__()
 
@@ -214,7 +213,7 @@ class Voxel_RefinerXL_sign(nn.Module):
                 res: int=512,
                 infer_patch_size: int=192,
                 use_checkpoint: bool=False,
-                use_fp16: bool = True):
+                use_fp16: bool = False):
         super().__init__()
 
         self.unet3d1 = UNet3DModel(in_channels=8, out_channels=8, use_conv_out=False, 
@@ -230,7 +229,7 @@ class Voxel_RefinerXL_sign(nn.Module):
         self.use_fp16 = use_fp16
         self.dtype = torch.float16 if use_fp16 else torch.float32
         if use_fp16:
-            self.convert_to_fp16()            
+            self.convert_to_fp16()
 
     def convert_to_fp16(self) -> None:
         self.apply(convert_module_to_f16)
@@ -241,7 +240,7 @@ class Voxel_RefinerXL_sign(nn.Module):
              mc_threshold=0,
         ):
         batch_size = int(reconst_x.coords[..., 0].max()) + 1
-        sparse_sdf, sparse_index = reconst_x.feats, reconst_x.coords
+        sparse_sdf, sparse_index = reconst_x.feats, reconst_x.coords        
         device = sparse_sdf.device
         voxel_resolution = 1024
         sdfs=[]
@@ -263,12 +262,6 @@ class Voxel_RefinerXL_sign(nn.Module):
         sdfs = torch.ones((batch_size, voxel_resolution, voxel_resolution, voxel_resolution),device=device, dtype=sparse_sdf.dtype)
         sdfs[sparse_index[...,0],sparse_index[...,1],sparse_index[...,2],sparse_index[...,3]] = sparse_sdf.squeeze(-1)
         sdfs = sdfs.unsqueeze(1)
-        
-        del sparse_sdf
-        del sparse_index
-        del reconst_x
-        torch.cuda.empty_cache()
-        gc.collect()
         
         N = sdfs.shape[0]
         outputs = torch.ones([N,1,512,512,512],device=sdfs.device, dtype=dtype)

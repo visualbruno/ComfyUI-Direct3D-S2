@@ -8,7 +8,7 @@ from ..ops import (
     sparse_window_attention,
 )
 from .compression_block import SparseDownBlock3d_v1, SparseDownBlock3d_v2
-from ......modules import sparse as sp
+import direct3d_s2.modules.sparse as sp
 
 
 class SpatialSparseAttention(torch.nn.Module):
