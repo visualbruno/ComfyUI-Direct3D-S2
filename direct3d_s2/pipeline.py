@@ -436,22 +436,20 @@ class Direct3DS2Pipeline(object):
                 outputs = self.refiner_1024.run(*outputs, mc_threshold=mc_threshold)
 
         return outputs
-        
+
     def init_refiner(self):
         state_dict_refiner = torch.load(self.model_refiner_path, map_location='cpu', weights_only=True)
         self.refiner = instantiate_from_config(self.cfg.refiner)
         self.refiner.load_state_dict(state_dict_refiner["refiner"], strict=True)
         self.refiner.eval()
-        
-        self.to(self.device)
+        self.refiner.to(self.device)
         
     def init_refiner_1024(self):
-        state_dict_refiner_1024 = torch.load(self.model_refiner_1024_path, map_location='cpu', weights_only=True)
-        self.refiner_1024 = instantiate_from_config(self.cfg.refiner_1024)
-        self.refiner_1024.load_state_dict(state_dict_refiner_1024["refiner"], strict=True)
-        self.refiner_1024.eval()
-        
-        self.to(self.device)
+        state_dict_refiner = torch.load(self.model_refiner_path, map_location='cpu', weights_only=True)
+        self.refiner = instantiate_from_config(self.cfg.refiner)
+        self.refiner.load_state_dict(state_dict_refiner["refiner"], strict=True)
+        self.refiner.eval()
+        self.refiner.to(self.device)
 
     def init_sparse_512(self):
         state_dict_sparse_512 = torch.load(self.model_sparse_512_path, map_location='cpu', weights_only=True)
@@ -492,10 +490,11 @@ class Direct3DS2Pipeline(object):
                                    use_shift=True,
                                    use_checkpoint=True,
                                    use_fp16=True)
-                                    
+        self.sparse_dit_512.to(self.device)                            
         self.sparse_dit_512.load_state_dict(state_dict_sparse_512["dit"], strict=True)
         self.sparse_dit_512.eval()
-        
+        self.sparse_dit_512.to(self.device) 
+
         self.sparse_scheduler_512 = instantiate_from_config(self.cfg.sparse_scheduler_512)
         
         self.sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
@@ -520,9 +519,10 @@ class Direct3DS2Pipeline(object):
                                         latents_scale=1.0,
                                         latents_shift=0.0,
                                         chunk_size=4)
-                                        
+                                       
         self.sparse_vae_1024.load_state_dict(state_dict_sparse_1024["vae"], strict=True)
         self.sparse_vae_1024.eval()
+        self.sparse_vae_1024.to(self.device) 
         self.sparse_dit_1024 = SparseDiT(resolution=128, 
                                    in_channels=16,
                                    out_channels=16,
@@ -544,7 +544,8 @@ class Direct3DS2Pipeline(object):
                                    use_fp16=True)
         self.sparse_dit_1024.load_state_dict(state_dict_sparse_1024["dit"], strict=True)
         self.sparse_dit_1024.eval() 
-
+        self.sparse_dit_1024.to(self.device) 
+        
         self.sparse_scheduler_1024 = instantiate_from_config(self.cfg.sparse_scheduler_1024)
         
         self.sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
@@ -553,16 +554,19 @@ class Direct3DS2Pipeline(object):
         
     @torch.no_grad()
     def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed):
-        self.clear_memory()
+        print(f"Refiner Enabled: ", remove_interior)
+        self.clear_memory() 
         self.init_sparse_1024()
-            
+        
         generator=torch.Generator(device=self.device).manual_seed(seed)
         
-        image = self.prepare_image(image)
+
         mesh = normalize_mesh(mesh)
         latent_index = mesh2index(mesh, size=1024, factor=8)
         latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
 
+        image = self.prepare_image(image)
+        print(f"sampling...")
         mesh = self.inference(image, self.sparse_vae_1024, self.sparse_dit_1024, 
                             self.sparse_image_encoder, self.sparse_scheduler_1024, 
                             generator=generator, mode='sparse1024', 
@@ -572,16 +576,18 @@ class Direct3DS2Pipeline(object):
         
     @torch.no_grad()
     def refine_512(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed):
+        print(f"Refiner Enabled: ", remove_interior)
         self.clear_memory()
         self.init_sparse_512()    
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
         
-        image = self.prepare_image(image)
         mesh = normalize_mesh(mesh)
         latent_index = mesh2index(mesh, size=512, factor=8)
         latent_index = sort_block(latent_index, self.sparse_dit_512.selection_block_size) 
 
+        image = self.prepare_image(image)
+        print(f"sampling...")
         mesh = self.inference(image, self.sparse_vae_512, self.sparse_dit_512, 
                             self.sparse_image_encoder, self.sparse_scheduler_512, 
                             generator=generator, mode='sparse512', 
@@ -591,16 +597,15 @@ class Direct3DS2Pipeline(object):
     
     @torch.no_grad()
     def remove_interior_512(self, mesh, mc_threshold):
+        print(f"remove interior")
         self.clear_memory()
-        self.init_sparse_1024()
-        
-        
         self.init_refiner()
         mesh = self.refiner.run(mesh, mc_threshold=mc_threshold)     
         return mesh
 
     @torch.no_grad()
     def remove_interior_1024(self, mesh, mc_threshold):
+        print(f"remove interior")
         self.clear_memory()
         self.init_refiner_1024()
         mesh = self.refiner_1024.run(reconst_x=mesh, mc_threshold=mc_threshold)                         
