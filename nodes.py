@@ -187,7 +187,7 @@ class Hy3DRefineMeshWithDirect3DS2:
                 "steps": ("INT",{"default":15}),
                 "guidance_scale": ("FLOAT",{"default":7.0,"min":0.0,"max":100.0}),
                 "remove_interior": ("BOOLEAN",{"default":False}),
-                "mc_threshold": ("FLOAT",{"default":0.2,"min":0.0,"max":1.0}),
+                "mc_threshold": ("FLOAT",{"default":0.20,"min":0.00,"max":1.00, "step": 0.01}),
                 "seed": ("INT",{"default":0,"min":0,"max":0x7fffffff}),
             },
         }
@@ -248,3 +248,4 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Hy3DRefineMeshWithDirect3DS2": "Hy3D Refine Mesh With Direct3DS2",
     "Hy3DRemoveInteriorWithDirect3DS2": "Hy3D Remove Interior With Direct3DS2",
     }
+
