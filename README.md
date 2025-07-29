@@ -1,11 +1,9 @@
 # ComfyUI-Direct3D-S2
-
-![results](results.png "Results")
-
 [Direct3D-S2](https://github.com/DreamTechAI/Direct3D-S2) ComfyUI Wrapper
 (Python v3.10, v3.11 or v3.12)
-
 Supported Models: 1.0 and 1.1
+
+![results](results.png "Results")
 
 Can be used to refine existing mesh from Hy3D 2.0/2.1 etc or construct dense mesh from image.
 
