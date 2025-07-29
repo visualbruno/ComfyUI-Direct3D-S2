@@ -4,11 +4,13 @@ Requires Python v3.10, v3.11 or v3.12
 
 I created these nodes to refine models generated with Hunyuan 3D v2.0 and v2.1
 
-Use only a "SDF Resolution" of 1024. 512 never generates good results, but it requires about 15Gb of VRAM
+Use only a "SDF Resolution" of 1024. 512 never generates good results
+
+Optimizations have been done by Easymode-ai. Now it requires about 11Gb of VRAM.
 
 # Known Bug
 
-Don't try to **remove interior** if you have less than 24Gb of VRAM. It crashes with OOM error. I'm still investigating the problem
+Removing interior can crash sometimes with OOM error. Try to run again.
 
 # Install requirements
 
@@ -34,7 +36,7 @@ Windows: You can find precompiled wheels here [https://huggingface.co/lldacing/f
 
 You will find the models here: [https://huggingface.co/wushuang98/Direct3D-S2/tree/main](https://huggingface.co/wushuang98/Direct3D-S2/tree/main)
 
-Create a folder `wushuang98/Direct3D-S2` in the folder `models` and copy the models `direct3d-s2-v-1-0` and `direct3d-s2-v-1-1` in `wushuang98` folder
+Create a folder `wushuang98/Direct3D-S2` in the folder `models` and copy the models `direct3d-s2-v-1-0` and `direct3d-s2-v-1-1` in `wushuang98/Direct3D-S2` folder
 
 You should have a structure like this:
 
