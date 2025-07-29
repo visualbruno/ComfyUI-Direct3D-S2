@@ -243,7 +243,7 @@ class Voxel_RefinerXL_sign(nn.Module):
         self.dtype = torch.float16 if use_fp16 else torch.float32
         if use_fp16:
             self.convert_to_fp16()
-
+        
     def convert_to_fp16(self) -> None:
         self.apply(convert_module_to_f16)
     
@@ -254,9 +254,11 @@ class Voxel_RefinerXL_sign(nn.Module):
         ):
 
         with torch.no_grad():
+            device = reconst_x.feats.device
+            reconst_x.feats.cpu()
+            reconst_x.coords.cpu()
             batch_size = int(reconst_x.coords[..., 0].max()) + 1
             sparse_sdf, sparse_index = reconst_x.feats, reconst_x.coords        
-            device = sparse_sdf.device
             voxel_resolution = 1024
             sdfs = []
 
@@ -268,7 +270,7 @@ class Voxel_RefinerXL_sign(nn.Module):
                 sdfs.append(sdf.unsqueeze(0))
 
             sdfs1024 = torch.stack(sdfs,dim=0)
-            reconst_x1024 = reconst_x
+            reconst_x1024 = reconst_x.cpu()
             reconst_x = self.downsample(reconst_x)
             batch_size = int(reconst_x.coords[..., 0].max()) + 1
             sparse_sdf, sparse_index = reconst_x.feats, reconst_x.coords
@@ -303,6 +305,7 @@ class Voxel_RefinerXL_sign(nn.Module):
             outputs = outputs.repeat_interleave(2, dim=2).repeat_interleave(2, dim=3).repeat_interleave(2, dim=4)
             sdfs = sdfs1024.clone()
             sdfs = sdfs.abs()*outputs
+     
             
             sparse_index1024 = reconst_x1024.coords.cpu()
             
