@@ -342,6 +342,23 @@ class Direct3DS2Pipeline(object):
         self.sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
         self.sparse_image_encoder.to(self.device)
         
+    def init_dense(self):
+        state_dict_dense = torch.load(self.model_dense_path, map_location='cpu', weights_only=True)
+        self.dense_vae = instantiate_from_config(self.cfg.dense_vae)
+        self.dense_vae.load_state_dict(state_dict_dense["vae"], strict=True)
+        self.dense_vae.eval()
+        self.dense_vae.to(self.device)
+        self.dense_dit = instantiate_from_config(self.cfg.dense_dit)
+        self.dense_dit.load_state_dict(state_dict_dense["dit"], strict=True)
+        self.dense_dit.eval()
+        self.dense_dit.to(self.device)
+        
+        self.dense_scheduler = instantiate_from_config(self.cfg.dense_scheduler)        
+        
+        self.sparse_image_encoder = instantiate_from_config(self.cfg.sparse_image_encoder)
+        self.sparse_image_encoder.to(self.device)
+        
+        
     @torch.no_grad()
     def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed):
         self.clear_memory()
@@ -351,9 +368,23 @@ class Direct3DS2Pipeline(object):
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
                 
-        mesh = normalize_mesh(mesh)
+        scale = 0.97
+        
+        # while True:
+            # mesh = normalize_mesh(mesh, scale=scale)
+            # latent_index = mesh2index(mesh, size=1024, factor=8)
+            # latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
+            # print(f"number of latent tokens: {len(latent_index)}")
+
+            # if len(latent_index) <= 120_000:
+                # break
+            
+            # scale -= 0.01 
+
+        mesh = normalize_mesh(mesh, scale=scale)
         latent_index = mesh2index(mesh, size=1024, factor=8)
         latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
+        print(f"number of latent tokens: {len(latent_index)}")            
         
         mesh = self.inference(image, self.sparse_vae_1024, self.sparse_dit_1024, 
                             self.sparse_image_encoder, self.sparse_scheduler_1024, 
@@ -381,6 +412,60 @@ class Direct3DS2Pipeline(object):
                             mc_threshold=mc_threshold, latent_index=latent_index, 
                             remove_interior=remove_interior, num_inference_steps=steps, guidance_scale=guidance_scale)[0]         
         return mesh   
+        
+    @torch.no_grad()
+    def generate_dense(self, image, steps, guidance_scale, mc_threshold, seed):
+        self.clear_memory()
+        self.init_dense()
+        
+        generator=torch.Generator(device=self.device).manual_seed(seed)
+        
+        image = self.prepare_image(image)
+        
+        mesh = self.inference(image, self.dense_vae, self.dense_dit, 
+                            self.sparse_image_encoder, self.dense_scheduler, 
+                            generator=generator, mode='dense', 
+                            mc_threshold=mc_threshold, 
+                            num_inference_steps=steps, guidance_scale=guidance_scale)[0]         
+        return mesh    
+
+    @torch.no_grad()
+    def refine_dense_512(self, image, latent_index, steps, guidance_scale, remove_interior, mc_threshold, seed):
+        self.clear_memory()
+        self.init_sparse_512()    
+            
+        generator=torch.Generator(device=self.device).manual_seed(seed)
+                
+        latent_index = sort_block(latent_index, self.sparse_dit_512.selection_block_size) 
+        print(f"number of latent tokens: {len(latent_index)}")
+        
+        image = self.prepare_image(image)
+
+        mesh = self.inference(image, self.sparse_vae_512, self.sparse_dit_512, 
+                            self.sparse_image_encoder, self.sparse_scheduler_512, 
+                            generator=generator, mode='sparse512', 
+                            mc_threshold=mc_threshold, latent_index=latent_index, 
+                            remove_interior=remove_interior, num_inference_steps=steps, guidance_scale=guidance_scale)[0]         
+        return mesh 
+
+    @torch.no_grad()
+    def refine_dense_1024(self, image, latent_index, steps, guidance_scale, remove_interior, mc_threshold, seed):
+        self.clear_memory()
+        self.init_sparse_1024()
+
+        image = self.prepare_image(image)
+            
+        generator=torch.Generator(device=self.device).manual_seed(seed)
+
+        latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
+        print(f"number of latent tokens: {len(latent_index)}")            
+        
+        mesh = self.inference(image, self.sparse_vae_1024, self.sparse_dit_1024, 
+                            self.sparse_image_encoder, self.sparse_scheduler_1024, 
+                            generator=generator, mode='sparse1024', 
+                            mc_threshold=mc_threshold, latent_index=latent_index, 
+                            remove_interior=remove_interior, num_inference_steps=steps, guidance_scale=guidance_scale)[0]         
+        return mesh     
     
     @torch.no_grad()
     def __call__(
