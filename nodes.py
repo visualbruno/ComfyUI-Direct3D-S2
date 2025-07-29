@@ -192,8 +192,8 @@ class Hy3DRefineMeshWithDirect3DS2:
             },
         }
 
-    RETURN_TYPES = ("TRIMESH", )
-    RETURN_NAMES = ("trimesh", )
+    RETURN_TYPES = ("TRIMESH","HY3DS2PIPELINE", )
+    RETURN_NAMES = ("trimesh","pipeline", )
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
@@ -207,7 +207,7 @@ class Hy3DRefineMeshWithDirect3DS2:
         else:
             print(f'Unknown sdf_resolution: {sdf_resolution}')
         
-        return (trimesh,)
+        return (trimesh, pipeline, )
 
 class Hy3DRemoveInteriorWithDirect3DS2:
     @classmethod
@@ -250,8 +250,8 @@ class Hy3DGenerateDenseMeshWithDirect3DS2:
             },
         }
 
-    RETURN_TYPES = ("D3DLATENTINDEX", )
-    RETURN_NAMES = ("latent_index", )
+    RETURN_TYPES = ("D3DLATENTINDEX","HY3DS2PIPELINE", )
+    RETURN_NAMES = ("latent_index", "pipeline", )
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
@@ -259,7 +259,7 @@ class Hy3DGenerateDenseMeshWithDirect3DS2:
         image = tensor2pil(image)        
         latent_index = pipeline.generate_dense(image,steps,guidance_scale,mc_threshold,seed)
         
-        return (latent_index,)      
+        return (latent_index, pipeline, )      
 
 class Hy3DRefineDenseMeshWithDirect3DS2:
     @classmethod
@@ -278,8 +278,8 @@ class Hy3DRefineDenseMeshWithDirect3DS2:
             },
         }
 
-    RETURN_TYPES = ("TRIMESH", )
-    RETURN_NAMES = ("trimesh", )
+    RETURN_TYPES = ("TRIMESH","HY3DS2PIPELINE", )
+    RETURN_NAMES = ("trimesh","pipeline", )
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
@@ -293,7 +293,7 @@ class Hy3DRefineDenseMeshWithDirect3DS2:
         else:
             print(f'Unknown sdf_resolution: {sdf_resolution}')
         
-        return (trimesh,)        
+        return (trimesh, pipeline,)        
         
 
 NODE_CLASS_MAPPINGS = {
