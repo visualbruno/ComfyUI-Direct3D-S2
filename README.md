@@ -1,44 +1,69 @@
 # ComfyUI-Direct3D-S2
 
-Requires Python v3.10, v3.11 or v3.12
+![results](results.png "Results")
 
-I created these nodes to refine models generated with Hunyuan 3D v2.0 and v2.1
+[Direct3D-S2](https://github.com/DreamTechAI/Direct3D-S2) ComfyUI Wrapper
+(Python v3.10, v3.11 or v3.12)
 
-Use only a "SDF Resolution" of 1024. 512 never generates good results, but it requires about 15Gb of VRAM
+Supported Models: 1.0 and 1.1
 
-# Known Bug
+Can be used to refine existing mesh from Hy3D 2.0/2.1 etc or construct dense mesh from image.
 
-Don't try to **remove interior** if you have less than 24Gb of VRAM. It crashes with OOM error. I'm still investigating the problem
+## VRAM Requirements
+- **8GB VRAM:** Confirmed working (CPU offloaded, very slow)
+- **12GB VRAM:** Minimum Recommended (Slow CPU offloading in complex cases)
+- **16–24GB VRAM:** Ideal for best performance
 
-# Install requirements
+# Installation
 
-`pip install -r requirements.txt`
+## Install requirements
 
-# Install voxelize
+```bash
+cd ComfyUI\custom_nodes\ComfyUI-Direct3D-S2
+..\..\..\..\python_embeded\python.exe -m pip install -r requirements.txt
+```
 
-Go in the folder `voxelize` and run the command: `python setup.py install`
+## Install voxelize
 
-# Install torchsparse
+```bash
+cd ComfyUI\custom_nodes\ComfyUI-Direct3D-S2
+..\..\..\..\python_embeded\python.exe setup.py install
+```
+
+## Install torchsparse
 
 Linux: `pip install torchsparse`
 
 Windows: You will find wheels in the folder `wheels`
 
-# Install Flash Attention
+## Install Flash Attention
 
 Linux: `pip install flash_attn`
 
 Windows: You can find precompiled wheels here [https://huggingface.co/lldacing/flash-attention-windows-wheel/tree/main](https://huggingface.co/lldacing/flash-attention-windows-wheel/tree/main)
 
-# Download the models
+## Download the models
 
 You will find the models here: [https://huggingface.co/wushuang98/Direct3D-S2/tree/main](https://huggingface.co/wushuang98/Direct3D-S2/tree/main)
 
-Create a folder `wushuang98/Direct3D-S2` in the folder `models` and copy the models `direct3d-s2-v-1-0` and `direct3d-s2-v-1-1` in `wushuang98` folder
+### Clone HuggingFace Repository
+```bash
+cd ComfyUI/models
+mkdir -p wushuang98
+cd wushuang98
+git clone https://huggingface.co/wushuang98/Direct3D-S2
+```
 
-You should have a structure like this:
+Final structure should look like:
 
-`ComfyUI / models / wushuang98 / Direct3D-S2 / direct3d-s2-v-1-0 / files from huggingface`
+```
+ComfyUI/models/wushuang98/Direct3D-S2/direct3d-s2-v-1-0/
+ComfyUI/models/wushuang98/Direct3D-S2/direct3d-s2-v-1-1/
+```
 
-`ComfyUI / models / wushuang98 / Direct3D-S2 / direct3d-s2-v-1-1 / files from huggingface`
 
+Make sure to place the respective checkpoints and config files inside each version folder.
+
+# Known Bugs
+
+Occasional OOM's
