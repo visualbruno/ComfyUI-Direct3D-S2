@@ -1,8 +1,8 @@
 {
   "id": "84834a64-0c64-4534-b346-4d50d6a2ef54",
   "revision": 0,
-  "last_node_id": 8,
-  "last_link_id": 15,
+  "last_node_id": 10,
+  "last_link_id": 24,
   "nodes": [
     {
       "id": 5,
@@ -170,8 +170,8 @@
           "type": "IMAGE",
           "links": [
             2,
-            7,
-            12
+            17,
+            22
           ]
         }
       ],
@@ -184,130 +184,6 @@
       "widgets_values": [
         "Image_04207_.png",
         "image"
-      ]
-    },
-    {
-      "id": 8,
-      "type": "Hy3DRefineMeshWithDirect3DS2",
-      "pos": [
-        406.5525817871094,
-        379.0614013671875
-      ],
-      "size": [
-        324.7476501464844,
-        242
-      ],
-      "flags": {},
-      "order": 4,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "pipeline",
-          "type": "HY3DS2PIPELINE",
-          "link": 15
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 12
-        },
-        {
-          "name": "trimesh",
-          "type": "TRIMESH",
-          "link": 10
-        }
-      ],
-      "outputs": [
-        {
-          "name": "trimesh",
-          "type": "TRIMESH",
-          "links": [
-            13
-          ]
-        },
-        {
-          "name": "pipeline",
-          "type": "HY3DS2PIPELINE",
-          "links": null
-        }
-      ],
-      "properties": {
-        "aux_id": "visualbruno/ComfyUI-Direct3D-S2",
-        "ver": "cfdf78fc5b53d871d3f702e72b3e6715372cb74b",
-        "Node name for S&R": "Hy3DRefineMeshWithDirect3DS2",
-        "widget_ue_connectable": {}
-      },
-      "widgets_values": [
-        1024,
-        15,
-        7,
-        false,
-        0.2,
-        93511250,
-        "randomize"
-      ]
-    },
-    {
-      "id": 7,
-      "type": "Hy3DRefineDenseMeshWithDirect3DS2",
-      "pos": [
-        -14.04350757598877,
-        383.4981689453125
-      ],
-      "size": [
-        369.1060485839844,
-        242
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "pipeline",
-          "type": "HY3DS2PIPELINE",
-          "link": 14
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 7
-        },
-        {
-          "name": "latent_index",
-          "type": "D3DLATENTINDEX",
-          "link": 8
-        }
-      ],
-      "outputs": [
-        {
-          "name": "trimesh",
-          "type": "TRIMESH",
-          "links": [
-            10
-          ]
-        },
-        {
-          "name": "pipeline",
-          "type": "HY3DS2PIPELINE",
-          "links": [
-            15
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "visualbruno/ComfyUI-Direct3D-S2",
-        "ver": "cfdf78fc5b53d871d3f702e72b3e6715372cb74b",
-        "Node name for S&R": "Hy3DRefineDenseMeshWithDirect3DS2",
-        "widget_ue_connectable": {}
-      },
-      "widgets_values": [
-        512,
-        30,
-        7,
-        false,
-        0.2,
-        1931858112,
-        "randomize"
       ]
     },
     {
@@ -341,14 +217,14 @@
           "name": "latent_index",
           "type": "D3DLATENTINDEX",
           "links": [
-            8
+            18
           ]
         },
         {
           "name": "pipeline",
           "type": "HY3DS2PIPELINE",
           "links": [
-            14
+            16
           ]
         }
       ],
@@ -384,7 +260,7 @@
         {
           "name": "trimesh",
           "type": "TRIMESH",
-          "link": 13
+          "link": 24
         }
       ],
       "outputs": [
@@ -406,6 +282,128 @@
         16,
         200000,
         0
+      ]
+    },
+    {
+      "id": 10,
+      "type": "Hy3DRefineMeshWithDirect3DS2",
+      "pos": [
+        406.5525817871094,
+        379.0614013671875
+      ],
+      "size": [
+        324.7476501464844,
+        218
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "link": 21
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 22
+        },
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 23
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            24
+          ]
+        },
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Direct3D-S2",
+        "ver": "d964482133aa943de17336be69979058b5001b9e",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "Hy3DRefineMeshWithDirect3DS2"
+      },
+      "widgets_values": [
+        1024,
+        15,
+        7,
+        0.2,
+        0,
+        "randomize"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "Hy3DRefineDenseMeshWithDirect3DS2",
+      "pos": [
+        -18.480144500732422,
+        379.06146240234375
+      ],
+      "size": [
+        369.1060485839844,
+        218
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "link": 16
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 17
+        },
+        {
+          "name": "latent_index",
+          "type": "D3DLATENTINDEX",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            23
+          ]
+        },
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "links": [
+            21
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Direct3D-S2",
+        "ver": "d964482133aa943de17336be69979058b5001b9e",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "Hy3DRefineDenseMeshWithDirect3DS2"
+      },
+      "widgets_values": [
+        512,
+        30,
+        7,
+        0.2,
+        0,
+        "randomize"
       ]
     }
   ],
@@ -443,60 +441,60 @@
       "STRING"
     ],
     [
-      7,
+      16,
+      2,
+      1,
+      9,
+      0,
+      "HY3DS2PIPELINE"
+    ],
+    [
+      17,
       3,
       2,
-      7,
+      9,
       1,
       "IMAGE"
     ],
     [
-      8,
+      18,
       2,
       0,
-      7,
+      9,
       2,
       "D3DLATENTINDEX"
     ],
     [
+      21,
+      9,
+      1,
       10,
-      7,
       0,
-      8,
-      2,
-      "TRIMESH"
+      "HY3DS2PIPELINE"
     ],
     [
-      12,
+      22,
       3,
       2,
-      8,
+      10,
       1,
       "IMAGE"
     ],
     [
-      13,
-      8,
+      23,
+      9,
+      0,
+      10,
+      2,
+      "TRIMESH"
+    ],
+    [
+      24,
+      10,
       0,
       4,
       0,
       "TRIMESH"
-    ],
-    [
-      14,
-      2,
-      1,
-      7,
-      0,
-      "HY3DS2PIPELINE"
-    ],
-    [
-      15,
-      7,
-      1,
-      8,
-      0,
-      "HY3DS2PIPELINE"
     ]
   ],
   "groups": [],

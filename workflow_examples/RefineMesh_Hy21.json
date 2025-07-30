@@ -1,8 +1,8 @@
 {
   "id": "45478d21-d4a1-4f64-9d3b-9d91489b068b",
   "revision": 0,
-  "last_node_id": 29,
-  "last_link_id": 30,
+  "last_node_id": 30,
+  "last_link_id": 34,
   "nodes": [
     {
       "id": 18,
@@ -47,62 +47,6 @@
       ]
     },
     {
-      "id": 11,
-      "type": "Hy3DRefineMeshWithDirect3DS2",
-      "pos": [
-        -292.8925476074219,
-        267.5238952636719
-      ],
-      "size": [
-        324.7476501464844,
-        242
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "pipeline",
-          "type": "HY3DS2PIPELINE",
-          "link": 7
-        },
-        {
-          "name": "image",
-          "type": "IMAGE",
-          "link": 11
-        },
-        {
-          "name": "trimesh",
-          "type": "TRIMESH",
-          "link": 28
-        }
-      ],
-      "outputs": [
-        {
-          "name": "trimesh",
-          "type": "TRIMESH",
-          "links": [
-            30
-          ]
-        }
-      ],
-      "properties": {
-        "aux_id": "visualbruno/ComfyUI-Hunyuan3DWrapper",
-        "ver": "630a30a56e2cebb1f94f65a5a1499c507fd84982",
-        "Node name for S&R": "Hy3DRefineMeshWithDirect3DS2",
-        "widget_ue_connectable": {}
-      },
-      "widgets_values": [
-        1024,
-        15,
-        7,
-        false,
-        0.2,
-        12345,
-        "fixed"
-      ]
-    },
-    {
       "id": 10,
       "type": "Hy3DDirect3DS2ModelLoader",
       "pos": [
@@ -122,7 +66,7 @@
           "name": "pipeline",
           "type": "HY3DS2PIPELINE",
           "links": [
-            7
+            31
           ]
         }
       ],
@@ -157,15 +101,15 @@
           "name": "trimesh",
           "type": "TRIMESH",
           "links": [
-            28
+            33
           ]
         }
       ],
       "properties": {
         "aux_id": "visualbruno/ComfyUI-Hunyuan3d-2-1",
         "ver": "eddd0e198d964c6fbc0d296cda89ca3b162fb774",
-        "widget_ue_connectable": {},
-        "Node name for S&R": "Hy3D21LoadMesh"
+        "Node name for S&R": "Hy3D21LoadMesh",
+        "widget_ue_connectable": {}
       },
       "widgets_values": [
         "C:\\Git\\ComfyUI\\output\\ArmedCar_Hy3D_00001_.obj"
@@ -201,7 +145,7 @@
           "name": "image_with_alpha",
           "type": "IMAGE",
           "links": [
-            11
+            32
           ]
         }
       ],
@@ -292,7 +236,7 @@
         {
           "name": "trimesh",
           "type": "TRIMESH",
-          "link": 30
+          "link": 34
         }
       ],
       "outputs": [
@@ -330,25 +274,69 @@
         false,
         0
       ]
+    },
+    {
+      "id": 30,
+      "type": "Hy3DRefineMeshWithDirect3DS2",
+      "pos": [
+        -292.8925476074219,
+        267.5238952636719
+      ],
+      "size": [
+        324.7476501464844,
+        218
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "link": 31
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 32
+        },
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "link": 33
+        }
+      ],
+      "outputs": [
+        {
+          "name": "trimesh",
+          "type": "TRIMESH",
+          "links": [
+            34
+          ]
+        },
+        {
+          "name": "pipeline",
+          "type": "HY3DS2PIPELINE",
+          "links": null
+        }
+      ],
+      "properties": {
+        "aux_id": "visualbruno/ComfyUI-Direct3D-S2",
+        "ver": "d964482133aa943de17336be69979058b5001b9e",
+        "widget_ue_connectable": {},
+        "Node name for S&R": "Hy3DRefineMeshWithDirect3DS2"
+      },
+      "widgets_values": [
+        1024,
+        15,
+        7,
+        0.2,
+        0,
+        "randomize"
+      ]
     }
   ],
   "links": [
-    [
-      7,
-      10,
-      0,
-      11,
-      0,
-      "HY3DS2PIPELINE"
-    ],
-    [
-      11,
-      15,
-      2,
-      11,
-      1,
-      "IMAGE"
-    ],
     [
       14,
       17,
@@ -366,16 +354,32 @@
       "STRING"
     ],
     [
-      28,
+      31,
+      10,
+      0,
+      30,
+      0,
+      "HY3DS2PIPELINE"
+    ],
+    [
+      32,
+      15,
+      2,
+      30,
+      1,
+      "IMAGE"
+    ],
+    [
+      33,
       28,
       0,
-      11,
+      30,
       2,
       "TRIMESH"
     ],
     [
+      34,
       30,
-      11,
       0,
       17,
       0,
