@@ -11,12 +11,10 @@ Can be used to refine existing mesh from Hy3D 2.0/2.1 etc or construct dense mes
 - **8GB VRAM:** Confirmed working (CPU offloaded, very slow)
 - **12GB VRAM:** Minimum Recommended (Slow CPU offloading in complex cases)
 - **16–24GB VRAM:** Ideal for best performance
-=======
 
 # Installation
 
 ## Install requirements
-=======
 
 ```bash
 cd ComfyUI\custom_nodes\ComfyUI-Direct3D-S2
@@ -60,8 +58,6 @@ Final structure should look like:
 ComfyUI/models/wushuang98/Direct3D-S2/direct3d-s2-v-1-0/
 ComfyUI/models/wushuang98/Direct3D-S2/direct3d-s2-v-1-1/
 ```
-=======
-
 
 Make sure to place the respective checkpoints and config files inside each version folder.
 
