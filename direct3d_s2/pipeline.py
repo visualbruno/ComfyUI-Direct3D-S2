@@ -368,7 +368,7 @@ class Direct3DS2Pipeline(object):
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
                 
-        scale = 0.97
+        scale = 1.0
         
         while True:
             mesh = normalize_mesh(mesh, scale=scale)
@@ -395,7 +395,7 @@ class Direct3DS2Pipeline(object):
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
 
-        scale = 0.97
+        scale = 1.0
         
         while True:
             mesh = normalize_mesh(mesh, scale=scale)

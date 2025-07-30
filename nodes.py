@@ -273,7 +273,6 @@ class Hy3DRefineDenseMeshWithDirect3DS2:
                 "sdf_resolution": ([512,1024],{"default":1024}),
                 "steps": ("INT",{"default":15}),
                 "guidance_scale": ("FLOAT",{"default":7.0,"min":0.0,"max":100.0}),
-                #"remove_interior": ("BOOLEAN",{"default":False}),
                 "mc_threshold": ("FLOAT",{"default":0.20,"min":0.00,"max":1.00, "step": 0.01}),
                 "seed": ("INT",{"default":0,"min":0,"max":0x7fffffff}),
             },
@@ -284,7 +283,7 @@ class Hy3DRefineDenseMeshWithDirect3DS2:
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
-    def process(self, pipeline, image, latent_index, sdf_resolution, steps, guidance_scale, remove_interior, mc_threshold, seed):
+    def process(self, pipeline, image, latent_index, sdf_resolution, steps, guidance_scale, mc_threshold, seed):
         image = tensor2pil(image)
         remove_interior = False #no longer required
         if sdf_resolution==1024:
