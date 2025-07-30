@@ -189,6 +189,7 @@ class Hy3DRefineMeshWithDirect3DS2:
                 #"remove_interior": ("BOOLEAN",{"default":False}),
                 "mc_threshold": ("FLOAT",{"default":0.20,"min":0.00,"max":1.00, "step": 0.01}),
                 "seed": ("INT",{"default":0,"min":0,"max":0x7fffffff}),
+                "max_latent_tokens": ("INT",{"default":100000,"min":0,"max":200000}),
             },
         }
 
@@ -197,13 +198,13 @@ class Hy3DRefineMeshWithDirect3DS2:
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
-    def process(self, pipeline, image, trimesh, sdf_resolution, steps, guidance_scale, mc_threshold, seed):
+    def process(self, pipeline, image, trimesh, sdf_resolution, steps, guidance_scale, mc_threshold, seed, max_latent_tokens):
         image = tensor2pil(image)
         remove_interior = False #no longer required
         if sdf_resolution==1024:
-            trimesh = pipeline.refine_1024(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed)
+            trimesh = pipeline.refine_1024(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed, max_latent_tokens)
         elif sdf_resolution==512:
-            trimesh = pipeline.refine_512(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed)
+            trimesh = pipeline.refine_512(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed, max_latent_tokens)
         else:
             print(f'Unknown sdf_resolution: {sdf_resolution}')
         

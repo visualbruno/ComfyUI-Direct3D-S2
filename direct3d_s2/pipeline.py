@@ -360,7 +360,7 @@ class Direct3DS2Pipeline(object):
         
         
     @torch.no_grad()
-    def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed):
+    def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed, max_latent_tokens):
         self.clear_memory()
         self.init_sparse_1024()
 
@@ -370,21 +370,16 @@ class Direct3DS2Pipeline(object):
                 
         scale = 0.97
         
-        # while True:
-            # mesh = normalize_mesh(mesh, scale=scale)
-            # latent_index = mesh2index(mesh, size=1024, factor=8)
-            # latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
-            # print(f"number of latent tokens: {len(latent_index)}")
+        while True:
+            mesh = normalize_mesh(mesh, scale=scale)
+            latent_index = mesh2index(mesh, size=1024, factor=8)
+            latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
+            print(f"number of latent tokens: {len(latent_index)}")
 
-            # if len(latent_index) <= 120_000:
-                # break
+            if len(latent_index) <= max_latent_tokens:
+                break
             
-            # scale -= 0.01 
-
-        mesh = normalize_mesh(mesh, scale=scale)
-        latent_index = mesh2index(mesh, size=1024, factor=8)
-        latent_index = sort_block(latent_index, self.sparse_dit_1024.selection_block_size) 
-        print(f"number of latent tokens: {len(latent_index)}")            
+            scale -= 0.01            
         
         mesh = self.inference(image, self.sparse_vae_1024, self.sparse_dit_1024, 
                             self.sparse_image_encoder, self.sparse_scheduler_1024, 
@@ -394,15 +389,24 @@ class Direct3DS2Pipeline(object):
         return mesh
         
     @torch.no_grad()
-    def refine_512(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed):
+    def refine_512(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed, max_latent_tokens):
         self.clear_memory()
         self.init_sparse_512()    
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
-                
-        mesh = normalize_mesh(mesh)
-        latent_index = mesh2index(mesh, size=512, factor=8)
-        latent_index = sort_block(latent_index, self.sparse_dit_512.selection_block_size) 
+
+        scale = 0.97
+        
+        while True:
+            mesh = normalize_mesh(mesh, scale=scale)
+            latent_index = mesh2index(mesh, size=512, factor=8)
+            latent_index = sort_block(latent_index, self.sparse_dit_512.selection_block_size) 
+            print(f"number of latent tokens: {len(latent_index)}")
+
+            if len(latent_index) <= max_latent_tokens:
+                break
+            
+            scale -= 0.01
 
         image = self.prepare_image(image)
 
