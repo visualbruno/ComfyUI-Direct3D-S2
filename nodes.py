@@ -190,6 +190,7 @@ class Hy3DRefineMeshWithDirect3DS2:
                 "mc_threshold": ("FLOAT",{"default":0.20,"min":0.00,"max":1.00, "step": 0.01}),
                 "seed": ("INT",{"default":0,"min":0,"max":0x7fffffff}),
                 "max_latent_tokens": ("INT",{"default":100000,"min":0,"max":200000}),
+                "scale": ("FLOAT",{"default":0.95,"min":0.01,"max":0.99, "step": 0.01}),
             },
         }
 
@@ -198,44 +199,17 @@ class Hy3DRefineMeshWithDirect3DS2:
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
-    def process(self, pipeline, image, trimesh, sdf_resolution, steps, guidance_scale, mc_threshold, seed, max_latent_tokens):
+    def process(self, pipeline, image, trimesh, sdf_resolution, steps, guidance_scale, mc_threshold, seed, max_latent_tokens, scale):
         image = tensor2pil(image)
         remove_interior = False #no longer required
         if sdf_resolution==1024:
-            trimesh = pipeline.refine_1024(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed, max_latent_tokens)
+            trimesh = pipeline.refine_1024(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed, max_latent_tokens, scale)
         elif sdf_resolution==512:
-            trimesh = pipeline.refine_512(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed, max_latent_tokens)
+            trimesh = pipeline.refine_512(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed, max_latent_tokens, scale)
         else:
             print(f'Unknown sdf_resolution: {sdf_resolution}')
         
-        return (trimesh, pipeline, )
-
-class Hy3DRemoveInteriorWithDirect3DS2:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {
-            "required": {
-                "pipeline": ("HY3DS2PIPELINE",),
-                "trimesh": ("TRIMESH",),
-                "sdf_resolution": ([512,1024],{"default":1024}),
-                "mc_threshold": ("FLOAT",{"default":0.2,"min":0.0,"max":1.0}),
-            },
-        }
-
-    RETURN_TYPES = ("TRIMESH", )
-    RETURN_NAMES = ("trimesh", )
-    FUNCTION = "process"
-    CATEGORY = "Hy3DS2Wrapper"
-
-    def process(self, pipeline, trimesh, sdf_resolution, mc_threshold):        
-        if sdf_resolution==512:
-            trimesh = pipeline.remove_interior_512(trimesh,mc_threshold)
-        elif sdf_resolution==1024:
-            trimesh = pipeline.remove_interior_1024(trimesh,mc_threshold)
-        else:
-            print(f'Unknown sdf_resolution: {sdf_resolution}')
-        
-        return (trimesh,)     
+        return (trimesh, pipeline, )  
 
 class Hy3DGenerateDenseMeshWithDirect3DS2:
     @classmethod
@@ -299,7 +273,6 @@ class Hy3DRefineDenseMeshWithDirect3DS2:
 NODE_CLASS_MAPPINGS = {
     "Hy3DDirect3DS2ModelLoader": Hy3DDirect3DS2ModelLoader,
     "Hy3DRefineMeshWithDirect3DS2": Hy3DRefineMeshWithDirect3DS2,
-    "Hy3DRemoveInteriorWithDirect3DS2": Hy3DRemoveInteriorWithDirect3DS2,
     "Hy3DGenerateDenseMeshWithDirect3DS2": Hy3DGenerateDenseMeshWithDirect3DS2,
     "Hy3DRefineDenseMeshWithDirect3DS2": Hy3DRefineDenseMeshWithDirect3DS2,
     }
@@ -307,7 +280,6 @@ NODE_CLASS_MAPPINGS = {
 NODE_DISPLAY_NAME_MAPPINGS = {
     "Hy3DDirect3DS2ModelLoader": "Hy3D Direct3DS2 Model Loader",
     "Hy3DRefineMeshWithDirect3DS2": "Hy3D Refine Mesh With Direct3DS2",
-    "Hy3DRemoveInteriorWithDirect3DS2": "Hy3D Remove Interior With Direct3DS2",
     "Hy3DGenerateDenseMeshWithDirect3DS2": "Hy3D Generate Dense Mesh With Direct3DS2",
     "Hy3DRefineDenseMeshWithDirect3DS2": "Hy3D Refine Dense Mesh With Direct3DS2",
     }

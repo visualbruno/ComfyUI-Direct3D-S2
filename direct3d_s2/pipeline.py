@@ -360,15 +360,13 @@ class Direct3DS2Pipeline(object):
         
         
     @torch.no_grad()
-    def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed, max_latent_tokens):
+    def refine_1024(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed, max_latent_tokens, scale):
         self.clear_memory()
         self.init_sparse_1024()
 
         image = self.prepare_image(image)
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
-                
-        scale = 0.97
         
         while True:
             mesh = normalize_mesh(mesh, scale=scale)
@@ -389,13 +387,11 @@ class Direct3DS2Pipeline(object):
         return mesh
         
     @torch.no_grad()
-    def refine_512(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed, max_latent_tokens):
+    def refine_512(self, image, mesh, steps, guidance_scale, remove_interior, mc_threshold, seed, max_latent_tokens, scale):
         self.clear_memory()
         self.init_sparse_512()    
             
         generator=torch.Generator(device=self.device).manual_seed(seed)
-
-        scale = 0.97
         
         while True:
             mesh = normalize_mesh(mesh, scale=scale)
