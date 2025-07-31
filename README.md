@@ -24,7 +24,7 @@ cd ComfyUI\custom_nodes\ComfyUI-Direct3D-S2
 ## Install voxelize
 
 ```bash
-cd ComfyUI\custom_nodes\ComfyUI-Direct3D-S2
+cd ComfyUI\custom_nodes\ComfyUI-Direct3D-S2\voxelize
 ..\..\..\..\python_embeded\python.exe setup.py install
 ```
 
