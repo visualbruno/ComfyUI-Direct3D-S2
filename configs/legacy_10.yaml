@@ -1,0 +1,171 @@
+dense_vae:
+  target: direct3d_s2.models.autoencoders.dense_vae.DenseShapeVAE
+  params:
+    use_checkpoint: true
+    embed_dim: 8
+    in_channels: 1
+    out_channels: 1
+    model_channels_encoder: [32, 128, 512]  
+    num_res_blocks_encoder: 2
+    num_res_blocks_middle_encoder: 2
+    model_channels_decoder: [512, 128, 64]
+    num_res_blocks_decoder: 4
+    num_res_blocks_middle_decoder: 4
+    use_fp16: true
+    latents_scale: 1.0
+    latents_shift: 0.0
+      
+dense_dit:
+  target: direct3d_s2.models.transformers.dense_dit.DenseDiT
+  params:
+    resolution: 16 
+    in_channels: 8
+    out_channels: 8
+    model_channels: 1024
+    cond_channels: 1024
+    num_blocks: 24
+    num_heads: 16
+    mlp_ratio: 4
+    patch_size: 1
+    pe_mode: ape
+    qk_rms_norm: true
+    use_checkpoint: true
+    use_fp16: true
+    latent_shape: [8, 16, 16, 16]
+
+dense_image_encoder:
+  target: direct3d_s2.models.conditioner.DinoEncoder
+  params:
+    model: facebookresearch/dinov2
+    version: dinov2_vitl14_reg
+    size: 518
+
+dense_scheduler:
+  target: diffusers.schedulers.FlowMatchEulerDiscreteScheduler
+  params:
+    num_train_timesteps: 1000
+    shift: 6.0 
+
+sparse_vae_512:
+  target: direct3d_s2.models.autoencoders.ss_vae_legacy.SparseSDFVAE
+  params:
+    use_checkpoint: true
+    embed_dim: 16
+    num_head_channels_encoder: 64
+    model_channels_encoder: 512 
+    num_heads_encoder: 8 
+    num_blocks_encoder: 4
+    num_head_channels_decoder: 64
+    model_channels_decoder: 512 
+    num_heads_decoder: 8 
+    num_blocks_decoder: 4
+    resolution: 64
+    out_channels: 1
+    use_fp16: true
+    latents_scale: 1.0
+    latents_shift: 0.0
+
+sparse_dit_512:
+  target: direct3d_s2.models.transformers.sparse_dit.SparseDiT 
+  params:
+    resolution: 64 
+    in_channels: 16
+    out_channels: 16
+    model_channels: 1024
+    cond_channels: 1024
+    num_blocks: 24
+    num_heads: 32
+    num_kv_heads: 2
+    compression_block_size: 4
+    selection_block_size: 8
+    topk: 32
+    compression_version: v2
+    pe_mode: ape
+    factor: 1.0
+    sparse_conditions: true
+    qk_rms_norm: true
+    use_shift: true
+    use_checkpoint: true
+    use_fp16: true
+
+sparse_scheduler_512:
+  target: diffusers.schedulers.FlowMatchEulerDiscreteScheduler
+  params:
+    num_train_timesteps: 1000
+    shift: 6.0
+
+sparse_vae_1024:
+  target: direct3d_s2.models.autoencoders.ss_vae_legacy.SparseSDFVAE
+  params:
+    use_checkpoint: true
+    embed_dim: 16
+    num_head_channels_encoder: 64
+    model_channels_encoder: 512 
+    num_heads_encoder: 8 
+    num_blocks_encoder: 4
+    num_head_channels_decoder: 64
+    model_channels_decoder: 512 
+    num_heads_decoder: 8 
+    num_blocks_decoder: 4
+    resolution: 128
+    out_channels: 1
+    use_fp16: true
+    latents_scale: 1.0
+    latents_shift: 0.0
+    chunk_size: 4
+
+sparse_dit_1024:
+  target: direct3d_s2.models.transformers.sparse_dit.SparseDiT 
+  params:
+    resolution: 128 
+    in_channels: 16
+    out_channels: 16
+    model_channels: 1024
+    cond_channels: 1024
+    num_blocks: 24
+    num_heads: 32
+    num_kv_heads: 2
+    compression_block_size: 4
+    selection_block_size: 8
+    topk: 8
+    compression_version: v2
+    pe_mode: ape
+    factor: 0.5
+    sparse_conditions: true
+    qk_rms_norm: true
+    use_shift: true
+    use_checkpoint: true
+    use_fp16: true
+
+sparse_scheduler_1024:
+  target: diffusers.schedulers.FlowMatchEulerDiscreteScheduler
+  params:
+    num_train_timesteps: 1000
+    shift: 8.0
+
+sparse_image_encoder:
+  target: direct3d_s2.models.conditioner.DinoEncoder
+  params:
+    model: facebookresearch/dinov2
+    version: dinov2_vitl14_reg
+    size: 518
+
+refiner:
+  target: direct3d_s2.models.refiner.unet_refiner_legacy.Voxel_RefinerXL
+  params:
+    in_channels: 1
+    out_channels: 1
+    layers_per_block:  2
+    layers_mid_block:  2
+    patch_size: 192
+    use_fp16: true
+
+refiner_1024:
+  target: direct3d_s2.models.refiner.unet_refiner_legacy.Voxel_RefinerXL_sign
+  params:
+    in_channels: 1
+    out_channels: 1
+    layers_per_block:  2
+    layers_mid_block:  2
+    patch_size: 256
+    use_fp16: true

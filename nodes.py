@@ -158,6 +158,7 @@ class Hy3DDirect3DS2ModelLoader:
             "required": {
                 "pipeline_path": (["wushuang98/Direct3D-S2"],{"default":"wushuang98/Direct3D-S2"}),
                 "subfolder": (["direct3d-s2-v-1-0","direct3d-s2-v-1-1"],{"default":"direct3d-s2-v-1-1"}),
+                "use_legacy_config": ("BOOLEAN",{"default":False}),
             },
         }
 
@@ -166,12 +167,12 @@ class Hy3DDirect3DS2ModelLoader:
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
-    def process(self, pipeline_path, subfolder):
+    def process(self, pipeline_path, subfolder, use_legacy_config):
         device = mm.get_torch_device()
         offload_device = mm.unet_offload_device()
         
         pipe = Direct3DS2Pipeline(device)
-        pipe.init_config(pipeline_path, subfolder=subfolder)
+        pipe.init_config(pipeline_path, subfolder=subfolder, use_legacy_config=use_legacy_config)
         
         return (pipe,) 
 
@@ -185,12 +186,12 @@ class Hy3DRefineMeshWithDirect3DS2:
                 "trimesh": ("TRIMESH",),
                 "sdf_resolution": ([512,1024],{"default":1024}),
                 "steps": ("INT",{"default":15}),
-                "guidance_scale": ("FLOAT",{"default":7.0,"min":0.0,"max":100.0}),
-                #"remove_interior": ("BOOLEAN",{"default":False}),
+                "guidance_scale": ("FLOAT",{"default":7.0,"min":0.0,"max":100.0}),                
                 "mc_threshold": ("FLOAT",{"default":0.20,"min":0.00,"max":1.00, "step": 0.01}),
                 "seed": ("INT",{"default":0,"min":0,"max":0x7fffffff}),
                 "max_latent_tokens": ("INT",{"default":100000,"min":0,"max":200000}),
                 "scale": ("FLOAT",{"default":0.95,"min":0.01,"max":0.99, "step": 0.01}),
+                "remove_interior": ("BOOLEAN",{"default":False}),
             },
         }
 
@@ -199,9 +200,8 @@ class Hy3DRefineMeshWithDirect3DS2:
     FUNCTION = "process"
     CATEGORY = "Hy3DS2Wrapper"
 
-    def process(self, pipeline, image, trimesh, sdf_resolution, steps, guidance_scale, mc_threshold, seed, max_latent_tokens, scale):
+    def process(self, pipeline, image, trimesh, sdf_resolution, steps, guidance_scale, mc_threshold, seed, max_latent_tokens, scale, remove_interior):
         image = tensor2pil(image)
-        remove_interior = False #no longer required
         if sdf_resolution==1024:
             trimesh = pipeline.refine_1024(image,trimesh,steps,guidance_scale,remove_interior,mc_threshold,seed, max_latent_tokens, scale)
         elif sdf_resolution==512:

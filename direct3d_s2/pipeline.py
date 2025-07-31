@@ -13,7 +13,8 @@ from typing import Union, List, Optional
 
 comfy_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 direct3ds2_path = os.path.join(comfy_path, "models", "wushuang98", "Direct3D-S2")
-config_path = os.path.join(comfy_path, "custom_nodes", "ComfyUI-Direct3D-S2", "config", "config.yaml")
+legacy_config_10_path = os.path.join(comfy_path, "custom_nodes", "ComfyUI-Direct3D-S2", "configs", "legacy_10.yaml")
+legacy_config_11_path = os.path.join(comfy_path, "custom_nodes", "ComfyUI-Direct3D-S2", "configs", "legacy_11.yaml")
 current_folder = os.path.join(comfy_path, "custom_nodes", "ComfyUI-Direct3D-S2")
 
 print(f'Adding to PATH : {current_folder}')
@@ -36,13 +37,24 @@ class Direct3DS2Pipeline(object):
         self.device = torch.device(device)  
         print(f'Comfy_path: {comfy_path}')
 
-    def init_config(self, pipeline_path, subfolder):        
+    def init_config(self, pipeline_path, subfolder, use_legacy_config):
+        self.use_legacy_config = use_legacy_config
         dtype=torch.float16
         model_dir = os.path.join(direct3ds2_path, subfolder) 
-        #self.config_path = config_path
         if os.path.isdir(model_dir):
             print(f'Model dir found. Using {subfolder}')
-            self.config_path = os.path.join(model_dir, 'config.yaml')
+            
+            if use_legacy_config:
+                print('Using legacy config')
+                if subfolder=="direct3d-s2-v-1-0":
+                    self.config_path = legacy_config_10_path
+                elif subfolder=="direct3d-s2-v1-1":
+                    self.config_path = legacy_config_11_path
+                else:
+                    print(f'Unknown subfolder for config: {subfolder}')
+            else:
+                self.config_path = os.path.join(model_dir, 'config.yaml')
+                
             self.model_dense_path = os.path.join(model_dir, 'model_dense.ckpt')
             self.model_sparse_512_path = os.path.join(model_dir, 'model_sparse_512.ckpt')
             self.model_sparse_1024_path = os.path.join(model_dir, 'model_sparse_1024.ckpt')
@@ -50,13 +62,22 @@ class Direct3DS2Pipeline(object):
             self.model_refiner_1024_path = os.path.join(model_dir, 'model_refiner_1024.ckpt')
         else:
             print('Model dir not found. Downloading from huggingface ...')
-                        
-            self.config_path = hf_hub_download(
-                repo_id=pipeline_path, 
-                subfolder=subfolder, 
-                filename="config.yaml", 
-                repo_type="model"
-            )                        
+
+            if use_legacy_config:
+                print('Using legacy config')
+                if subfolder=="direct3d-s2-v-1-0":
+                    self.config_path = legacy_config_10_path
+                elif subfolder=="direct3d-s2-v1-1":
+                    self.config_path = legacy_config_11_path
+                else:
+                    print(f'Unknown subfolder for config: {subfolder}')
+            else:
+                self.config_path = hf_hub_download(
+                    repo_id=pipeline_path, 
+                    subfolder=subfolder, 
+                    filename="config.yaml", 
+                    repo_type="model"
+                )                        
                         
             self.model_dense_path = hf_hub_download(
                 repo_id=pipeline_path, 
@@ -281,7 +302,7 @@ class Direct3DS2Pipeline(object):
         
         outputs = vae.decode_mesh(**decoder_inputs)
         
-        if remove_interior:            
+        if remove_interior and self.use_legacy_config:            
             del latents, noise_pred, noise_pred_cond, noise_pred_uncond, x_input, cond, uncond
             self.clear_memory()
             
