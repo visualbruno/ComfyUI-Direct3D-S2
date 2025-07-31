@@ -48,7 +48,7 @@ class Direct3DS2Pipeline(object):
                 print('Using legacy config')
                 if subfolder=="direct3d-s2-v-1-0":
                     self.config_path = legacy_config_10_path
-                elif subfolder=="direct3d-s2-v1-1":
+                elif subfolder=="direct3d-s2-v-1-1":
                     self.config_path = legacy_config_11_path
                 else:
                     print(f'Unknown subfolder for config: {subfolder}')
@@ -67,7 +67,7 @@ class Direct3DS2Pipeline(object):
                 print('Using legacy config')
                 if subfolder=="direct3d-s2-v-1-0":
                     self.config_path = legacy_config_10_path
-                elif subfolder=="direct3d-s2-v1-1":
+                elif subfolder=="direct3d-s2-v-1-1":
                     self.config_path = legacy_config_11_path
                 else:
                     print(f'Unknown subfolder for config: {subfolder}')
