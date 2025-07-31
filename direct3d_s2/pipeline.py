@@ -295,7 +295,7 @@ class Direct3DS2Pipeline(object):
         }
         if mode == 'dense':
             decoder_inputs['return_index'] = True
-        elif remove_interior:
+        elif remove_interior and self.use_legacy_config:
             decoder_inputs['return_feat'] = True
         if mode == 'sparse1024':
             decoder_inputs['voxel_resolution'] = 1024      
